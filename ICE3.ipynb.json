@@ -1,0 +1,1857 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "84062081",
+   "metadata": {},
+   "source": [
+    "## BKT model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "71f3f367",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Import all required packages including pyBKT.models.Model!\n",
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "from pyBKT.models import Model\n",
+    "import matplotlib.pyplot as plt"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eea0c771",
+   "metadata": {},
+   "source": [
+    "### Basic model creation and evaluation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "af34cf12",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# initialize the model with an optional seed and number of git initializations\n",
+    "model = Model(seed = 42, num_fits = 1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "5c00ac03",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model.fetch_dataset('https://raw.githubusercontent.com/CAHLR/pyBKT-examples/master/data/as.csv', '.')\n",
+    "model.fetch_dataset('https://raw.githubusercontent.com/CAHLR/pyBKT-examples/master/data/ct.csv', '.')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "f69b5385",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Index(['Unnamed: 0', 'Row', 'Anon Student Id', 'Problem Hierarchy',\n",
+      "       'Problem Name', 'Problem View', 'Step Name', 'Step Start Time',\n",
+      "       'First Transaction Time', 'Correct Transaction Time', 'Step End Time',\n",
+      "       'Step Duration (sec)', 'Correct Step Duration (sec)',\n",
+      "       'Error Step Duration (sec)', 'Correct First Attempt', 'Incorrects',\n",
+      "       'Hints', 'Corrects', 'KC(Default)', 'Opportunity(Default)'],\n",
+      "      dtype='object')\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Unnamed: 0</th>\n",
+       "      <th>Row</th>\n",
+       "      <th>Anon Student Id</th>\n",
+       "      <th>Problem Hierarchy</th>\n",
+       "      <th>Problem Name</th>\n",
+       "      <th>Problem View</th>\n",
+       "      <th>Step Name</th>\n",
+       "      <th>Step Start Time</th>\n",
+       "      <th>First Transaction Time</th>\n",
+       "      <th>Correct Transaction Time</th>\n",
+       "      <th>Step End Time</th>\n",
+       "      <th>Step Duration (sec)</th>\n",
+       "      <th>Correct Step Duration (sec)</th>\n",
+       "      <th>Error Step Duration (sec)</th>\n",
+       "      <th>Correct First Attempt</th>\n",
+       "      <th>Incorrects</th>\n",
+       "      <th>Hints</th>\n",
+       "      <th>Corrects</th>\n",
+       "      <th>KC(Default)</th>\n",
+       "      <th>Opportunity(Default)</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1576</td>\n",
+       "      <td>1927</td>\n",
+       "      <td>745Yh</td>\n",
+       "      <td>Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2</td>\n",
+       "      <td>RATIO2-001</td>\n",
+       "      <td>1</td>\n",
+       "      <td>SimplifiedNumeratorQuantity1</td>\n",
+       "      <td>2006-11-14 10:18:00.0</td>\n",
+       "      <td>2006-11-14 10:18:05.0</td>\n",
+       "      <td>2006-11-14 10:18:05.0</td>\n",
+       "      <td>2006-11-14 10:18:05.0</td>\n",
+       "      <td>5.00000</td>\n",
+       "      <td>5.00000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Calculate unit rate</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1580</td>\n",
+       "      <td>1931</td>\n",
+       "      <td>745Yh</td>\n",
+       "      <td>Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2</td>\n",
+       "      <td>RATIO2-001</td>\n",
+       "      <td>1</td>\n",
+       "      <td>SimplifiedNumeratorQuantity2</td>\n",
+       "      <td>2006-11-14 10:18:11.0</td>\n",
+       "      <td>2006-11-14 10:18:17.0</td>\n",
+       "      <td>2006-11-14 10:18:34.0</td>\n",
+       "      <td>2006-11-14 10:18:34.0</td>\n",
+       "      <td>23.00000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>23.00000</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Calculate unit rate</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1596</td>\n",
+       "      <td>1947</td>\n",
+       "      <td>745Yh</td>\n",
+       "      <td>Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2</td>\n",
+       "      <td>RATIO2-012</td>\n",
+       "      <td>1</td>\n",
+       "      <td>SimplifiedNumeratorQuantity1</td>\n",
+       "      <td>2006-11-14 10:50:52.0</td>\n",
+       "      <td>2006-11-14 10:50:57.0</td>\n",
+       "      <td>2006-11-14 10:51:11.0</td>\n",
+       "      <td>2006-11-14 10:51:11.0</td>\n",
+       "      <td>18.00000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>18.00000</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Calculate unit rate</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1597</td>\n",
+       "      <td>1948</td>\n",
+       "      <td>745Yh</td>\n",
+       "      <td>Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2</td>\n",
+       "      <td>RATIO2-012</td>\n",
+       "      <td>1</td>\n",
+       "      <td>SimplifiedNumeratorQuantity2</td>\n",
+       "      <td>2006-11-14 10:51:11.0</td>\n",
+       "      <td>2006-11-14 10:51:14.0</td>\n",
+       "      <td>2006-11-14 10:51:14.0</td>\n",
+       "      <td>2006-11-14 10:51:14.0</td>\n",
+       "      <td>3.00000</td>\n",
+       "      <td>3.00000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Calculate unit rate</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1612</td>\n",
+       "      <td>1963</td>\n",
+       "      <td>745Yh</td>\n",
+       "      <td>Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2</td>\n",
+       "      <td>RATIO2-054</td>\n",
+       "      <td>1</td>\n",
+       "      <td>SimplifiedNumeratorQuantity2</td>\n",
+       "      <td>2006-11-28 09:53:43.0</td>\n",
+       "      <td>2006-11-28 09:53:47.0</td>\n",
+       "      <td>2006-11-28 09:53:56.0</td>\n",
+       "      <td>2006-11-28 09:53:56.0</td>\n",
+       "      <td>13.00000</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>13.00000</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>Calculate unit rate</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Unnamed: 0   Row Anon Student Id  \\\n",
+       "0        1576  1927           745Yh   \n",
+       "1        1580  1931           745Yh   \n",
+       "2        1596  1947           745Yh   \n",
+       "3        1597  1948           745Yh   \n",
+       "4        1612  1963           745Yh   \n",
+       "\n",
+       "                                   Problem Hierarchy Problem Name  \\\n",
+       "0  Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2   RATIO2-001   \n",
+       "1  Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2   RATIO2-001   \n",
+       "2  Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2   RATIO2-012   \n",
+       "3  Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2   RATIO2-012   \n",
+       "4  Unit RATIO-PROPORTION, Section RATIO-PROPORTION-2   RATIO2-054   \n",
+       "\n",
+       "   Problem View                     Step Name        Step Start Time  \\\n",
+       "0             1  SimplifiedNumeratorQuantity1  2006-11-14 10:18:00.0   \n",
+       "1             1  SimplifiedNumeratorQuantity2  2006-11-14 10:18:11.0   \n",
+       "2             1  SimplifiedNumeratorQuantity1  2006-11-14 10:50:52.0   \n",
+       "3             1  SimplifiedNumeratorQuantity2  2006-11-14 10:51:11.0   \n",
+       "4             1  SimplifiedNumeratorQuantity2  2006-11-28 09:53:43.0   \n",
+       "\n",
+       "  First Transaction Time Correct Transaction Time          Step End Time  \\\n",
+       "0  2006-11-14 10:18:05.0    2006-11-14 10:18:05.0  2006-11-14 10:18:05.0   \n",
+       "1  2006-11-14 10:18:17.0    2006-11-14 10:18:34.0  2006-11-14 10:18:34.0   \n",
+       "2  2006-11-14 10:50:57.0    2006-11-14 10:51:11.0  2006-11-14 10:51:11.0   \n",
+       "3  2006-11-14 10:51:14.0    2006-11-14 10:51:14.0  2006-11-14 10:51:14.0   \n",
+       "4  2006-11-28 09:53:47.0    2006-11-28 09:53:56.0  2006-11-28 09:53:56.0   \n",
+       "\n",
+       "   Step Duration (sec)  Correct Step Duration (sec)  \\\n",
+       "0              5.00000                      5.00000   \n",
+       "1             23.00000                          NaN   \n",
+       "2             18.00000                          NaN   \n",
+       "3              3.00000                      3.00000   \n",
+       "4             13.00000                          NaN   \n",
+       "\n",
+       "   Error Step Duration (sec)  Correct First Attempt  Incorrects  Hints  \\\n",
+       "0                        NaN                      1           0      0   \n",
+       "1                   23.00000                      0           1      0   \n",
+       "2                   18.00000                      0           1      0   \n",
+       "3                        NaN                      1           0      0   \n",
+       "4                   13.00000                      0           1      0   \n",
+       "\n",
+       "   Corrects          KC(Default)  Opportunity(Default)  \n",
+       "0         1  Calculate unit rate                     1  \n",
+       "1         1  Calculate unit rate                     2  \n",
+       "2         1  Calculate unit rate                     3  \n",
+       "3         1  Calculate unit rate                     4  \n",
+       "4         1  Calculate unit rate                     5  "
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ct_df = pd.read_csv('ct.csv', encoding = 'latin')\n",
+    "print(ct_df.columns)\n",
+    "ct_df.head(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "31619aed",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# -1 (no response), 0 (incorrect), 1 (correct)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "f23d809c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Index(['order_id', 'assignment_id', 'user_id', 'assistment_id', 'problem_id',\n",
+      "       'original', 'correct', 'attempt_count', 'ms_first_response',\n",
+      "       'tutor_mode', 'answer_type', 'sequence_id', 'student_class_id',\n",
+      "       'position', 'type', 'base_sequence_id', 'skill_id', 'skill_name',\n",
+      "       'teacher_id', 'school_id', 'hint_count', 'hint_total', 'overlap_time',\n",
+      "       'template_id', 'answer_id', 'answer_text', 'first_action',\n",
+      "       'bottom_hint', 'opportunity', 'opportunity_original'],\n",
+      "      dtype='object')\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>order_id</th>\n",
+       "      <th>assignment_id</th>\n",
+       "      <th>user_id</th>\n",
+       "      <th>assistment_id</th>\n",
+       "      <th>problem_id</th>\n",
+       "      <th>original</th>\n",
+       "      <th>correct</th>\n",
+       "      <th>attempt_count</th>\n",
+       "      <th>ms_first_response</th>\n",
+       "      <th>tutor_mode</th>\n",
+       "      <th>...</th>\n",
+       "      <th>hint_count</th>\n",
+       "      <th>hint_total</th>\n",
+       "      <th>overlap_time</th>\n",
+       "      <th>template_id</th>\n",
+       "      <th>answer_id</th>\n",
+       "      <th>answer_text</th>\n",
+       "      <th>first_action</th>\n",
+       "      <th>bottom_hint</th>\n",
+       "      <th>opportunity</th>\n",
+       "      <th>opportunity_original</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>33022537</td>\n",
+       "      <td>277618</td>\n",
+       "      <td>64525</td>\n",
+       "      <td>33139</td>\n",
+       "      <td>51424</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>32454</td>\n",
+       "      <td>tutor</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>32454</td>\n",
+       "      <td>30799</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>26</td>\n",
+       "      <td>0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1.00000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>33022709</td>\n",
+       "      <td>277618</td>\n",
+       "      <td>64525</td>\n",
+       "      <td>33150</td>\n",
+       "      <td>51435</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4922</td>\n",
+       "      <td>tutor</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4922</td>\n",
+       "      <td>30799</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>55</td>\n",
+       "      <td>0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2.00000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>35450204</td>\n",
+       "      <td>220674</td>\n",
+       "      <td>70363</td>\n",
+       "      <td>33159</td>\n",
+       "      <td>51444</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>25390</td>\n",
+       "      <td>tutor</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>42000</td>\n",
+       "      <td>30799</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>88</td>\n",
+       "      <td>0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1.00000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>35450295</td>\n",
+       "      <td>220674</td>\n",
+       "      <td>70363</td>\n",
+       "      <td>33110</td>\n",
+       "      <td>51395</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4859</td>\n",
+       "      <td>tutor</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4859</td>\n",
+       "      <td>30059</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>41</td>\n",
+       "      <td>0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2.00000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>35450311</td>\n",
+       "      <td>220674</td>\n",
+       "      <td>70363</td>\n",
+       "      <td>33196</td>\n",
+       "      <td>51481</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>14</td>\n",
+       "      <td>19813</td>\n",
+       "      <td>tutor</td>\n",
+       "      <td>...</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4</td>\n",
+       "      <td>124564</td>\n",
+       "      <td>30060</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>65</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.00000</td>\n",
+       "      <td>3</td>\n",
+       "      <td>3.00000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 30 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   order_id  assignment_id  user_id  assistment_id  problem_id  original  \\\n",
+       "0  33022537         277618    64525          33139       51424         1   \n",
+       "1  33022709         277618    64525          33150       51435         1   \n",
+       "2  35450204         220674    70363          33159       51444         1   \n",
+       "3  35450295         220674    70363          33110       51395         1   \n",
+       "4  35450311         220674    70363          33196       51481         1   \n",
+       "\n",
+       "   correct  attempt_count  ms_first_response tutor_mode  ... hint_count  \\\n",
+       "0        1              1              32454      tutor  ...          0   \n",
+       "1        1              1               4922      tutor  ...          0   \n",
+       "2        0              2              25390      tutor  ...          0   \n",
+       "3        1              1               4859      tutor  ...          0   \n",
+       "4        0             14              19813      tutor  ...          3   \n",
+       "\n",
+       "   hint_total  overlap_time  template_id answer_id  answer_text  first_action  \\\n",
+       "0           3         32454        30799       NaN           26             0   \n",
+       "1           3          4922        30799       NaN           55             0   \n",
+       "2           3         42000        30799       NaN           88             0   \n",
+       "3           3          4859        30059       NaN           41             0   \n",
+       "4           4        124564        30060       NaN           65             0   \n",
+       "\n",
+       "  bottom_hint  opportunity  opportunity_original  \n",
+       "0         NaN            1               1.00000  \n",
+       "1         NaN            2               2.00000  \n",
+       "2         NaN            1               1.00000  \n",
+       "3         NaN            2               2.00000  \n",
+       "4     0.00000            3               3.00000  \n",
+       "\n",
+       "[5 rows x 30 columns]"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "as_df = pd.read_csv('as.csv', encoding = 'latin', low_memory = False)\n",
+    "print(as_df.columns)\n",
+    "as_df.head(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "7b5c03ff",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# fit a BKT model to every skill in cognitive tutor dataset\n",
+    "model.fit(data_path = 'ct.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "2c003baf",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Fitted Skills:\n",
+      "Plot non-terminating improper fraction\n",
+      "Plot terminating proper fraction\n",
+      "Calculate part in proportion with fractions\n",
+      "Calculate total in proportion with fractions\n"
+     ]
+    }
+   ],
+   "source": [
+    "# train multiple skills specified by a list of skill names or a REGEX match for each skill using the skills parameter\n",
+    "model.fit(data_path = 'ct.csv', skills = \".*fraction.*\")\n",
+    "print(\"Fitted Skills:\\n%s\" % '\\n'.join(model.coef_.keys()))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "844b0bbb",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Training RMSE: 0.454291\n",
+      "Training AUC: 0.706822\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Evaluate with the default RMSE then specify AUC.\n",
+    "model.fit(data_path = 'ct.csv')\n",
+    "training_rmse = model.evaluate(data = ct_df)\n",
+    "training_auc = model.evaluate(data_path = \"ct.csv\", metric = 'auc')\n",
+    "print (\"Training RMSE: %f\" % training_rmse)\n",
+    "print (\"Training AUC: %f\" % training_auc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "bc39cbfe",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Training MAE: 0.413333\n"
+     ]
+    }
+   ],
+   "source": [
+    "# We can even define our own metric\n",
+    "def mae(true_vals, pred_vals):\n",
+    "  \"\"\" Calculates the mean absolute error. \"\"\"\n",
+    "  return np.mean(np.abs(true_vals - pred_vals))\n",
+    "\n",
+    "training_mae = model.evaluate(data_path = 'ct.csv', metric = mae)\n",
+    "print(\"Training MAE: %f\" % training_mae)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6f0dc265",
+   "metadata": {},
+   "source": [
+    "### Model prediction"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "1183ca7e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Anon Student Id</th>\n",
+       "      <th>KC(Default)</th>\n",
+       "      <th>Correct First Attempt</th>\n",
+       "      <th>correct_predictions</th>\n",
+       "      <th>state_predictions</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>773</th>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot non-terminating improper fraction</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.50089</td>\n",
+       "      <td>0.73886</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>774</th>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot imperfect radical</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.50000</td>\n",
+       "      <td>0.50000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>775</th>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot terminating proper fraction</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0.51959</td>\n",
+       "      <td>0.54734</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>776</th>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot pi</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.50000</td>\n",
+       "      <td>0.50000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>777</th>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot terminating proper fraction</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0.46111</td>\n",
+       "      <td>0.38216</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    Anon Student Id                             KC(Default)  \\\n",
+       "773         0I891Gg  Plot non-terminating improper fraction   \n",
+       "774         0I891Gg                  Plot imperfect radical   \n",
+       "775         0I891Gg        Plot terminating proper fraction   \n",
+       "776         0I891Gg                                 Plot pi   \n",
+       "777         0I891Gg        Plot terminating proper fraction   \n",
+       "\n",
+       "     Correct First Attempt  correct_predictions  state_predictions  \n",
+       "773                      0              0.50089            0.73886  \n",
+       "774                      0              0.50000            0.50000  \n",
+       "775                      0              0.51959            0.54734  \n",
+       "776                      1              0.50000            0.50000  \n",
+       "777                      1              0.46111            0.38216  "
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Note again that the REGEX expression below trains BKT models on all\n",
+    "# skills containing the word fraction!\n",
+    "model.fit(data_path = 'ct.csv', skills = \".*fraction.*\")\n",
+    "preds = model.predict(data_path = 'ct.csv')\n",
+    "preds[['Anon Student Id', 'KC(Default)', 'Correct First Attempt', \n",
+    "       'correct_predictions', 'state_predictions']].head(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "5d1aab58",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Plot non-terminating improper fraction',\n",
+       "       'Plot terminating proper fraction',\n",
+       "       'Calculate part in proportion with fractions',\n",
+       "       'Calculate total in proportion with fractions'], dtype=object)"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Let's sanity check that we have only trained on the skills that we \n",
+    "# specified in the call to fit! Note that while it is possible for a \n",
+    "# BKT prediction to be 0.5 exactly, it is unlikely.\n",
+    "preds[preds['correct_predictions'] != 0.5]['KC(Default)'].unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "0e6645e4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.44058121514471155"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Let's manually calculate the RMSE of the correct predictions \n",
+    "# and ensure that it is the same as a call to the evaluate function.\n",
+    "def rmse(y_true, y_pred):\n",
+    "  \"\"\" Returns the root-mean squared error. \"\"\"\n",
+    "  return np.sqrt(np.mean((y_true - y_pred) ** 2))\n",
+    "\n",
+    "# Filter out the data for which we did not train!\n",
+    "preds_filtered = preds[preds['KC(Default)'].str.contains('fraction')]\n",
+    "manual_training_rmse = rmse(preds_filtered['Correct First Attempt'],\n",
+    "                            preds_filtered['correct_predictions'])\n",
+    "manual_training_rmse"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "71fa0691",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.44058121514470583"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# We use model.evaluate to accomplish the same thing!\n",
+    "# You should receive an RMSE that is identical to the above\n",
+    "# manually calculated RMSE.\n",
+    "model.evaluate(data = ct_df)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c1716093",
+   "metadata": {},
+   "source": [
+    "### Model cross-validation and variants"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "eb172245",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>rmse</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skill</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Plot non-terminating improper fraction</th>\n",
+       "      <td>0.48198</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Plot imperfect radical</th>\n",
+       "      <td>0.43818</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Plot terminating proper fraction</th>\n",
+       "      <td>0.49607</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Plot pi</th>\n",
+       "      <td>0.46972</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Plot whole number</th>\n",
+       "      <td>0.28949</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Plot decimal - thousandths</th>\n",
+       "      <td>0.47361</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Calculate unit rate</th>\n",
+       "      <td>0.48259</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Calculate part in proportion with fractions</th>\n",
+       "      <td>0.42732</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Calculate total in proportion with fractions</th>\n",
+       "      <td>0.42419</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Finding the intersection, Mixed</th>\n",
+       "      <td>0.49991</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Finding the intersection, GLF</th>\n",
+       "      <td>0.49093</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Finding the intersection, SIF</th>\n",
+       "      <td>0.49119</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                rmse\n",
+       "skill                                               \n",
+       "Plot non-terminating improper fraction       0.48198\n",
+       "Plot imperfect radical                       0.43818\n",
+       "Plot terminating proper fraction             0.49607\n",
+       "Plot pi                                      0.46972\n",
+       "Plot whole number                            0.28949\n",
+       "Plot decimal - thousandths                   0.47361\n",
+       "Calculate unit rate                          0.48259\n",
+       "Calculate part in proportion with fractions  0.42732\n",
+       "Calculate total in proportion with fractions 0.42419\n",
+       "Finding the intersection, Mixed              0.49991\n",
+       "Finding the intersection, GLF                0.49093\n",
+       "Finding the intersection, SIF                0.49119"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# folds is an optional parameter\n",
+    "model.crossvalidate(data_path = 'ct.csv', folds = 5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "651e2095",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>auc</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skill</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Calculations with Similar Figures</th>\n",
+       "      <td>0.59503</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                      auc\n",
+       "skill                                    \n",
+       "Calculations with Similar Figures 0.59503"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# for one particular skill, it gives better evaluation of true model performance during test time than the training loss\n",
+    "skill = 'Calculations with Similar Figures'\n",
+    "metric = 'auc'\n",
+    "\n",
+    "simple_cv = model.crossvalidate(data = as_df, skills = skill, \n",
+    "                                metric = metric)\n",
+    "simple_cv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "0fa2a41e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>auc</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skill</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Calculations with Similar Figures</th>\n",
+       "      <td>0.67353</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                      auc\n",
+       "skill                                    \n",
+       "Calculations with Similar Figures 0.67353"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# fits a different guess/slip rate for each class\n",
+    "multigs_cv = model.crossvalidate(data_path = 'as.csv', skills = skill,\n",
+    "                                 multigs = True, metric = metric)\n",
+    "multigs_cv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "df849fb3",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>auc</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skill</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Calculations with Similar Figures</th>\n",
+       "      <td>0.65717</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                      auc\n",
+       "skill                                    \n",
+       "Calculations with Similar Figures 0.65717"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# fits a different learn rate\n",
+    "multilearn_cv = model.crossvalidate(data_path = 'as.csv', skills = skill,\n",
+    "                                    multilearn = True, forgets = True, \n",
+    "                                    metric = metric)\n",
+    "multilearn_cv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "id": "aa514aaa",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>auc</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skill</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Calculations with Similar Figures</th>\n",
+       "      <td>0.59109</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Calculations with Similar Figures</th>\n",
+       "      <td>0.57042</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                      auc\n",
+       "skill                                    \n",
+       "Calculations with Similar Figures 0.59109\n",
+       "Calculations with Similar Figures 0.57042"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# The multiprior model generates different priors based on the first \n",
+    "# response of each student.\n",
+    "multiprior_cv = model.crossvalidate(data_path = 'as.csv', skills = skill,\n",
+    "                                    multiprior = True, metric = metric,\n",
+    "                                    folds = 3)\n",
+    "multipair_cv = model.crossvalidate(data_path = 'as.csv', skills = skill,\n",
+    "                                   multipair = True, metric = metric,\n",
+    "                                   folds = 3)\n",
+    "pd.concat([multiprior_cv, multipair_cv], axis = 0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "6f883cf0",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>auc</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skill</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Calculations with Similar Figures</th>\n",
+       "      <td>0.70166</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                      auc\n",
+       "skill                                    \n",
+       "Calculations with Similar Figures 0.70166"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# We combine the fifth parameter, forgets, with the previous multilearn\n",
+    "# and multiguess/slip models for a combo model.\n",
+    "combo_cv = model.crossvalidate(data_path = 'as.csv', skills = skill,\n",
+    "                               forgets = True, multilearn = True, \n",
+    "                               multigs = True, metric = metric)\n",
+    "combo_cv"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e963443a",
+   "metadata": {},
+   "source": [
+    "### Model parameter initialization and visualization"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "5b671061",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'Box and Whisker': {'prior': 1e-40}}"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# initialize the prior parameter to le-3 for the Box and Wisker skill\n",
+    "skill = 'Box and Whisker'\n",
+    "\n",
+    "model.coef_ = {skill: {'prior': 1e-40}}\n",
+    "model.coef_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "66b13e32",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Fitted Prior Value: 0.000000\n",
+      "Training AUC: 0.674790\n"
+     ]
+    }
+   ],
+   "source": [
+    "# train the model with the pre-intialized parameters\n",
+    "model.fit(data_path = 'as.csv', skills = skill, multigs = True)\n",
+    "low_prior_auc = model.evaluate(data_path = 'as.csv', metric = 'auc')\n",
+    "\n",
+    "# obtain the prior value by indexing into the model.coef_\n",
+    "print(\"Fitted Prior Value: %f\" % model.coef_[skill]['prior'])\n",
+    "print(\"Training AUC: %f\" % low_prior_auc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "cc727917",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Fitted Prior Value: 0.687773\n",
+      "Training AUC: 0.698413\n"
+     ]
+    }
+   ],
+   "source": [
+    "# initialize the prior to be more resonable\n",
+    "model.coef_ = {skill: {'prior': 0.5}}\n",
+    "model.fit(data_path = 'as.csv', skills = skill, multigs = True)\n",
+    "normal_prior_auc = model.evaluate(data_path = 'as.csv', metric = 'auc')\n",
+    "\n",
+    "# Print the fitted prior value and RMSE.\n",
+    "print(\"Fitted Prior Value: %f\" % model.coef_[skill]['prior'])\n",
+    "print(\"Training AUC: %f\" % normal_prior_auc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bedefddb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# visualize the parameter\n",
+    "model.fit(data_path = 'as.csv', skills = skill,\n",
+    "          forgets = True, multilearn = True, \n",
+    "          multigs = True)\n",
+    "model.params()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "f7035fac",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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MfvyeqmIFhEREZFKtXbtWs477zzatm3LIYccQt++ffnwww+9jlWpAlpEm9kJZrbYzJaZ2Ygy1hlgZnPNbL6ZfR/IPCIiIiISWM45hgwZwhFHHMHy5cuZM2cOEydOJCMjw+tolSpgRbSZBQPPACcCycC5Zpa82zoNgWeBU51zXYCzApVHRERERALvm2++ISwsjCuvvHLnsoSEBK677jrGjx/Ptddeu3P5oEGD+O677wD44osv6Nu3LwcffDBnnXUW2dnZAIwYMYLk5GS6devGLbfcAsC7775L165d6d69O0cccQQARUVF3HrrrfTq1Ytu3brxv//9D4DVq1dzxBFH0KNHD7p27cqPP/5YKccZyNE5egPLnHPLAcxsIjAYWFBinfOAD5xzKwCcc+sCmEdERESkTrnnk/ksWLWlUreZ3LIBd5/SpczH58+fz8EHH1yhbW7YsIGxY8fy1VdfERUVxUMPPcRjjz3Gtddey4cffsiiRYswMzIzMwEYM2YMn3/+Oa1atdq57KWXXiImJoZZs2aRl5dH//79Of744/nggw8YOHAgd955J0VFReTk5Ozroe8ikN05WgHpJe5n+JeV1AFoZGbfmdkcM7sogHlEREREyjRt2QZWZW73Okatc80119C9e3d69epV5jozZ85kwYIF9O/fnx49ejBhwgTS0tJo0KABERERXHrppXzwwQdERkYC0L9/f4YPH84LL7xAUVER4GvJfvXVV+nRoweHHnooGzduZOnSpfTq1YtXXnmF0aNH8+effxIdHV0pxxXIlujSLnN0pez/EOAYoB4ww8xmOueW7LIhs8uBywHatGkTgKgiIiJSl+UXFnPDxLl0ax3Dy8PLLvZqmj21GAdKly5deP/993fef+aZZ9iwYQM9e/YkJCSE4uLinY/tGFbOOcdxxx3HW2+99Y/t/fLLL3z99ddMnDiRp59+mm+++YZx48bx888/M2XKFHr06MHcuXNxzvHUU08xcODAf2zjhx9+YMqUKVx44YXceuutXHTR/rfbBrIlOgOIL3G/NbCqlHU+c85tc85tAH4Auu++Iefc8865ns65nnFxcQELLCIiInXT1D9XsyE7j2H9Er2OUuMdffTR5Obm8txzz+1ctqMLRWJiInPnzqW4uJj09HR++eUXAPr06cO0adNYtmzZzvWXLFlCdnY2WVlZnHTSSTzxxBPMnTsXgL/++otDDz2UMWPGEBsbS3p6OgMHDuS5556joKAAgCVLlrBt2zbS0tJo2rQpl112Gf/617/49ddfK+U4A9kSPQtob2ZJwEpgKL4+0CV9BDxtZiFAGHAo8HgAM4mIiIj8wyvTU2kbF8Xh7WK9jlLjmRmTJk3ipptu4uGHHyYuLm5nP+f+/fuTlJTEgQceSNeuXXf2nY6Li2P8+PGce+655OXlATB27Fiio6MZPHgwubm5OOd4/HFfmXjrrbeydOlSnHMcc8wxdO/enW7dupGamsrBBx+Mc464uDgmTZrEd999xyOPPEJoaCj169fn1VdfrZzjdG73HhaVx8xOAp4AgoGXnXP3mdmVAM65cf51bgUuBoqBF51zT+xpmz179nSzZ88OWGYRERGpW35dsZnTn53OmMFduKhvotdx9tvChQvp3Lmz1zFqnNJeNzOb45zrWdr6gWyJxjk3FZi627Jxu91/BHgkkDlEREREyjJ+WirR4SGcfnBrr6NIDaIZC0VERKTOWrsll6l/ruasnvHUDw9o26LUMiqiRUREpM56Y2YaRc4xrF+C11GkhlERLSIiInVSXmERb/y8gmM6NSWhSZTXcaSGUREtIiIiddInv69m47Z8hvdL8jqK1EAqokVERKTOcc7xyrQU2jWtT/92TbyOIzWQimgRERGpc+akbWb+qi0M75eIWWmTLMv+qF+/vtcRAk5FtIiIiNQ5r0xPpUFECKcf3MrrKFIOhYWFXkf4B43lIiIiInXKqsztfDZvDf86LInIMJVCVeWvv/7immuuYf369URGRvLCCy/QqVMnPvnkE8aOHUt+fj5NmjThjTfeoFmzZowePZpVq1aRmppKbGwsHTp0YMWKFSxfvpwVK1Zw4403cv3117Nt2zbOPvtsMjIyKCoqYtSoUZxzzjkBPx795IiIiEid8vrMNJxzXNinDgxr9+kIWPNn5W6z+YFw4oMVftrll1/OuHHjaN++PT///DNXX30133zzDYcddhgzZ87EzHjxxRd5+OGHefTRRwGYM2cOP/30E/Xq1WP06NEsWrSIb7/9lq1bt9KxY0euuuoqPvvsM1q2bMmUKVMAyMrKqtTDLYuKaBEREakzcguKeOuXFRzbuRnxjSO9jlNnZGdnM336dM4666ydy/Ly8gDIyMjgnHPOYfXq1eTn55OU9PdoKaeeeir16tXbef/kk08mPDyc8PBwmjZtytq1aznwwAO55ZZbuO222xg0aBCHH354lRyTimgRERGpMz6eu4rNOQVc3L+ODGu3Dy3GgVBcXEzDhg2ZO3fuPx677rrruPnmmzn11FP57rvvGD169M7HoqJ2Hb87PDx85+3g4GAKCwvp0KEDc+bMYerUqdx+++0cf/zx3HXXXYE6lJ10YaGIiIjUCc45XpmeSqfm0fRp29jrOHVKgwYNSEpK4t133wV85+L3338HfN0vWrXyXeA5YcKECm971apVREZGcsEFF3DLLbfw66+/Vl7wPVBLtIiIiNQJP6dsYuHqLTx4+oEa1i7AcnJyaN269c77N998M2+88QZXXXUVY8eOpaCggKFDh9K9e3dGjx7NWWedRatWrejTpw8pKSkV2teff/7JrbfeSlBQEKGhoTz33HOVfTilMudcleyosvTs2dPNnj3b6xgiIiJSw1z52hxmpmxkxohjqBcW7HWcgFm4cCGdO3f2OkaNU9rrZmZznHM9S1tf3TlERESk1svYnMMXC9YwtFebWl1AS9VRES0iIiK13msz0zAzLuxbB4a1kyqhIlpERERqte35RUz8JZ2BXZrRqmG9vT9BpBxURIuIiEit9uFvK8naXsDwfnVkWDupEiqiRUREpNZyzjF+egrJLRrQK7GR13GkFlERLSIiIrXWjL82smRtNhf3T9SwdlKpVESLiIhIrfXK9FQaR4VxSveWXkepU4KDg+nRo8fOr9TU1IDtKzU1lTfffDNg2y+LJlsRERGRWmnFxhy+WriWawa0IyJUw9pVpXr16pU6xffeFBYWEhJSsfJ0RxF93nnnVXh/+0Mt0SIiIlIrvTojlSAzLuijYe2qg7lz59KnTx+6devGaaedxubNmwEYMGAAd9xxB0ceeST//e9/mTVrFt26daNv377ceuutdO3aFYCioiJuvfVWevXqRbdu3fjf//4HwIgRI/jxxx/p0aMHjz/+OPPnz6d379706NGDbt26sXTp0oAcj1qiRUREpNbZllfI27PTObFrc5rHRHgdxzMP/fIQizYtqtRtdmrcidt637bHdbZv306PHj0ASEpK4sMPP+Siiy7iqaee4sgjj+Suu+7innvu4YknngAgMzOT77//HoCuXbvy/PPP069fP0aMGLFzmy+99BIxMTHMmjWLvLw8+vfvz/HHH8+DDz7If/7zHyZPngzAddddxw033MD5559Pfn4+RUVFlXr8O6iIFhERkVrng99WsjW3kIv7a1g7L+zenSMrK4vMzEyOPPJIAIYNG8ZZZ5218/FzzjkH8BXTW7dupV+/fgCcd955O4vjL774gj/++IP33ntv5zaXLl1KWFjYLvvu27cv9913HxkZGZx++um0b98+IMeoIlpERERqFecc46el0K11DAe3aeh1HE/trcW4uoiKigJ8564szjmeeuopBg4cuMvy7777bpf75513HoceeihTpkxh4MCBvPjiixx99NGVnll9okVERKRW+XHpBv5av43h/TSsXXURExNDo0aN+PHHHwF47bXXdrZKl9SoUSOio6OZOXMmABMnTtz52MCBA3nuuecoKCgAYMmSJWzbto3o6Gi2bt26c73ly5fTtm1brr/+ek499VT++OOPgByTWqJFRESkVhk/PZXY+mGc3K2F11GkhAkTJnDllVeSk5ND27ZteeWVV0pd76WXXuKyyy4jKiqKAQMGEBMTA8Cll15KamoqBx98MM454uLimDRpEt26dSMkJITu3bszfPhwcnNzef311wkNDaV58+bcddddATke21OzeXXUs2dPN3v2bK9jiIiISDWUsmEbR/3nO64/pj03H9fB6zieWLhwIZ07d/Y6xj7Lzs6mfv36ADz44IOsXr2a//73vwHfb2mvm5nNcc71LG19tUSLiIhIrfHqjFRCg40LDm3jdRTZR1OmTOGBBx6gsLCQhIQExo8f73WkUqmIFhERkVohO6+Qd2dncPKBLWjaoO4Oa1fTnXPOOTtH66jOdGGhiIiI1ArvzU4nO6+Q4RrWTqqAimgRERGp8YqLHRNmpNEjviE94ht6HUfqABXRIiIiUuN9v3Q9KRu2cXH/RK+jSB2hIlpERERqvPHTUmkaHc6JXTWsnVQNFdEiIiJSoy1bl833S9ZzQZ8EwkJU2lQH9913H126dKFbt2706NGDn3/+mQEDBrBjmOKTTjqJzMxMb0PuJ43OISIiIjXaqzNSCQsO4tzeGtauOpgxYwaTJ0/m119/JTw8nA0bNpCfn7/LOlOnTvUoXeXR2zURERGpsbbkFvDenAwGdW9BXHS413EEWL16NbGxsYSH+85HbGwsLVu23GWdxMRENmzYQGpqKp06dWLYsGF069aNM888k5ycHABGjBhBcnIy3bp1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\n",
+      "text/plain": [
+       "<Figure size 864x432 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# disable the warnings\n",
+    "import warnings\n",
+    "warnings.simplefilter(action='ignore')\n",
+    "\n",
+    "# Plot the learns, forgets, slips and guesses for each of the classes.\n",
+    "params = model.params()\n",
+    "plt.figure(figsize = (12, 6))\n",
+    "plt.plot(params.loc[(skill, 'guesses')], label = 'Guesses')\n",
+    "plt.plot(params.loc[(skill, 'learns')], label = 'Learns')\n",
+    "plt.plot(params.loc[(skill, 'forgets')], label = 'Forgets')\n",
+    "plt.plot(params.loc[(skill, 'slips')], label = 'Slips')\n",
+    "plt.xlabel('Template ID')\n",
+    "plt.ylabel('Rate')\n",
+    "plt.title('BKT Parameters per Template ID Class')\n",
+    "plt.legend();"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7b078806",
+   "metadata": {},
+   "source": [
+    "### Extended data and model configuration"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "ca7fd609",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>accuracy</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skill</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Circle Graph</th>\n",
+       "      <td>0.68533</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Box and Whisker</th>\n",
+       "      <td>0.76148</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                 accuracy\n",
+       "skill                    \n",
+       "Circle Graph      0.68533\n",
+       "Box and Whisker   0.76148"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "config = {'multigs': True,\n",
+    "          'multilearn': True,\n",
+    "          'skills': ['Box and Whisker', 'Circle Graph'],\n",
+    "          'forgets': True,\n",
+    "          'metric': 'accuracy',\n",
+    "          'folds': 4,\n",
+    "          'seed': 42 * 42}\n",
+    "model.crossvalidate(data_path = 'as.csv', **config)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "558edc55",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'order_id': 'custom_order',\n",
+       " 'skill_name': 'custom_skill',\n",
+       " 'correct': 'custom_answer',\n",
+       " 'multigs': 'custom_gs_classes'}"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "defaults = {'order_id': 'custom_order', \n",
+    "            'skill_name': 'custom_skill', \n",
+    "            'correct': 'custom_answer'}\n",
+    "\n",
+    "defaults['multigs'] = 'custom_gs_classes'\n",
+    "\n",
+    "# final column mapping\n",
+    "defaults"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "id": "8778dec3",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>custom_order</th>\n",
+       "      <th>Anon Student Id</th>\n",
+       "      <th>custom_skill</th>\n",
+       "      <th>custom_answer</th>\n",
+       "      <th>custom_gs_classes</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>773</th>\n",
+       "      <td>112149</td>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot non-terminating improper fraction (Custom)</td>\n",
+       "      <td>0</td>\n",
+       "      <td>RATIONAL1-014</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>774</th>\n",
+       "      <td>112151</td>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot imperfect radical (Custom)</td>\n",
+       "      <td>0</td>\n",
+       "      <td>RATIONAL1-041</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>775</th>\n",
+       "      <td>112156</td>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot terminating proper fraction (Custom)</td>\n",
+       "      <td>0</td>\n",
+       "      <td>RATIONAL1-104</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>776</th>\n",
+       "      <td>112157</td>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot pi (Custom)</td>\n",
+       "      <td>1</td>\n",
+       "      <td>RATIONAL1-122</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>777</th>\n",
+       "      <td>112159</td>\n",
+       "      <td>0I891Gg</td>\n",
+       "      <td>Plot terminating proper fraction (Custom)</td>\n",
+       "      <td>1</td>\n",
+       "      <td>RATIONAL1-180</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     custom_order Anon Student Id  \\\n",
+       "773        112149         0I891Gg   \n",
+       "774        112151         0I891Gg   \n",
+       "775        112156         0I891Gg   \n",
+       "776        112157         0I891Gg   \n",
+       "777        112159         0I891Gg   \n",
+       "\n",
+       "                                        custom_skill  custom_answer  \\\n",
+       "773  Plot non-terminating improper fraction (Custom)              0   \n",
+       "774                  Plot imperfect radical (Custom)              0   \n",
+       "775        Plot terminating proper fraction (Custom)              0   \n",
+       "776                                 Plot pi (Custom)              1   \n",
+       "777        Plot terminating proper fraction (Custom)              1   \n",
+       "\n",
+       "    custom_gs_classes  \n",
+       "773     RATIONAL1-014  \n",
+       "774     RATIONAL1-041  \n",
+       "775     RATIONAL1-104  \n",
+       "776     RATIONAL1-122  \n",
+       "777     RATIONAL1-180  "
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# use the mapping with the modified CogTutor dataset with the names\n",
+    "columns = ['Row', 'Anon Student Id', 'KC(Default)', \n",
+    "           'Correct First Attempt', 'Problem Name']\n",
+    "my_df = ct_df[columns]\n",
+    "my_df.columns = ['custom_order', 'Anon Student Id',\n",
+    "                 'custom_skill', 'custom_answer',\n",
+    "                 'custom_gs_classes']\n",
+    "my_df['custom_skill'] += ' (Custom)'\n",
+    "my_df.head(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3f5b8153",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# crossvalidate/fit given these defalut column mappings\n",
+    "model.crossvalidate(data = my_df, metric = 'auc',\n",
+    "                    defaults = defaults)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ad682d6c",
+   "metadata": {},
+   "source": [
+    "### Summary"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2fcedc36",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def mae(true_vals, pred_vals):\n",
+    "  \"\"\" Calculates the mean absolute error. \"\"\"\n",
+    "  return np.mean(np.abs(true_vals - pred_vals))\n",
+    "\n",
+    "# This code fetches data, fits, predicts, evaluates and crossvalidates\n",
+    "# a BKT model on all skills in Cognitive Tutor. It uses the mean absolute\n",
+    "# error as the desired error metric.\n",
+    "model = Model(seed = 42, num_fits = 5)\n",
+    "model.fit(data_path = 'ct.csv')\n",
+    "preds_df = model.predict(data_path = 'ct.csv')\n",
+    "mae_error = model.evaluate(data_path = 'ct.csv', metric = mae)\n",
+    "cv_errors = model.crossvalidate(data_path = 'ct.csv', metric = mae)\n",
+    "params_df = model.params()\n",
+    "print(\"Training MAE: %f\" % mae_error)\n",
+    "cv_errors"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ee058499",
+   "metadata": {},
+   "source": [
+    "## IRT"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "525a906e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Collecting pystan\n",
+      "  Downloading pystan-3.4.0-py3-none-any.whl (13 kB)\n",
+      "Collecting clikit<0.7,>=0.6\n",
+      "  Downloading clikit-0.6.2-py2.py3-none-any.whl (91 kB)\n",
+      "\u001b[K     |████████████████████████████████| 91 kB 2.2 MB/s eta 0:00:01\n",
+      "\u001b[?25hCollecting aiohttp<4.0,>=3.6\n",
+      "  Downloading aiohttp-3.8.1-cp38-cp38-macosx_10_9_x86_64.whl (574 kB)\n",
+      "\u001b[K     |████████████████████████████████| 574 kB 3.2 MB/s eta 0:00:01     |███████████████▍                | 276 kB 3.2 MB/s eta 0:00:01\n",
+      "\u001b[?25hRequirement already satisfied: setuptools in ./opt/anaconda3/lib/python3.8/site-packages (from pystan) (52.0.0.post20210125)\n",
+      "Collecting pysimdjson<4.0,>=3.2\n",
+      "  Downloading pysimdjson-3.2.0-cp38-cp38-macosx_10_14_x86_64.whl (196 kB)\n",
+      "\u001b[K     |████████████████████████████████| 196 kB 6.0 MB/s eta 0:00:01\n",
+      "\u001b[?25hCollecting pystan\n",
+      "  Downloading pystan-3.3.0-py3-none-any.whl (13 kB)\n",
+      "Requirement already satisfied: numpy<2.0,>=1.7 in ./opt/anaconda3/lib/python3.8/site-packages (from pystan) (1.20.1)\n",
+      "  Downloading pystan-3.2.0-py3-none-any.whl (13 kB)\n",
+      "  Downloading pystan-3.1.1-py3-none-any.whl (13 kB)\n",
+      "  Downloading pystan-3.1.0-py3-none-any.whl (13 kB)\n",
+      "  Downloading pystan-3.0.2-py3-none-any.whl (13 kB)\n",
+      "  Downloading pystan-3.0.1-py3-none-any.whl (12 kB)\n",
+      "  Downloading pystan-3.0.0-py3-none-any.whl (12 kB)\n",
+      "  Downloading pystan-2.19.1.1-cp38-cp38-macosx_10_9_x86_64.whl (37.4 MB)\n",
+      "\u001b[K     |████████████████████████████████| 37.4 MB 384 kB/s eta 0:00:01    |▏                               | 204 kB 5.1 MB/s eta 0:00:08     |███▌                            | 4.1 MB 5.1 MB/s eta 0:00:07     |████████                        | 9.3 MB 5.7 MB/s eta 0:00:05     |████████▍                       | 9.8 MB 5.7 MB/s eta 0:00:05     |████████▉                       | 10.3 MB 5.7 MB/s eta 0:00:05     |████████████▎                   | 14.3 MB 5.7 MB/s eta 0:00:05\n",
+      "\u001b[?25hRequirement already satisfied: Cython!=0.25.1,>=0.22 in ./opt/anaconda3/lib/python3.8/site-packages (from pystan) (0.29.23)\n",
+      "Installing collected packages: pystan\n",
+      "Successfully installed pystan-2.19.1.1\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install pystan\n",
+    "import pandas as pd\n",
+    "from pprint import pprint\n",
+    "import pystan\n",
+    "from scipy.special import expit\n",
+    "from matplotlib import pyplot as plt\n",
+    "from numpy.random import normal, randint, binomial, choice\n",
+    "from numpy import percentile, concatenate, array, linspace, append\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "251a55f3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Here is our randomly generated data:\n",
+      "{'I': 15,\n",
+      " 'R': 10000,\n",
+      " 'S': 15,\n",
+      " 'grade': array([0, 1, 1, ..., 1, 0, 1]),\n",
+      " 'item': array([ 2, 14, 14, ..., 14,  2, 15]),\n",
+      " 'subject': array([ 2, 10,  9, ..., 14,  4, 11])}\n"
+     ]
+    }
+   ],
+   "source": [
+    "def generate_binary_irt_data(sim_input):\n",
+    "    # simulate abilities, difficulties, and subject/item combinations\n",
+    "    sim_ability = normal(loc=0,\n",
+    "                         scale=sim_input['sigma_ability'],\n",
+    "                         size=sim_input['S'])\n",
+    "    sim_difficulty = normal(loc=sim_input['mu_difficulty'],\n",
+    "                            scale=sim_input['sigma_difficulty'],\n",
+    "                            size=sim_input['I'])\n",
+    "    sim_subject = randint(low=0,\n",
+    "                          high=sim_input['S'],\n",
+    "                          size=sim_input['R'])\n",
+    "    sim_item = randint(low=0,\n",
+    "                       high=sim_input['I'],\n",
+    "                       size=sim_input['R'])\n",
+    "    # work out success probabilities\n",
+    "    sim_success_probabilities = expit(sim_ability[sim_subject] -\n",
+    "                                      sim_difficulty[sim_item])\n",
+    "    # simulate grades\n",
+    "    sim_grade = binomial(n=1,\n",
+    "                         p=sim_success_probabilities,\n",
+    "                         size=sim_input['R'])\n",
+    "    # Dictionary of data to give to STAN\n",
+    "    sim_data = {\n",
+    "        'grade': sim_grade,\n",
+    "        'subject': sim_subject + 1,\n",
+    "        'item': sim_item + 1,\n",
+    "    }\n",
+    "    sim_data.update({i: binary_sim_input[i] for i in ['R', 'I', 'S']})\n",
+    "    recoverables = {\n",
+    "        'ability': sim_ability,\n",
+    "        'difficulty': sim_difficulty,\n",
+    "    }\n",
+    "    recoverables.update({i: binary_sim_input[i] for i in ['sigma_ability',\n",
+    "                                                          'mu_difficulty',\n",
+    "                                                          'sigma_difficulty']})\n",
+    "    return sim_data, recoverables\n",
+    "\n",
+    "# define some input data\n",
+    "binary_sim_input = {'R': 10000,\n",
+    "                    'I': 15,\n",
+    "                    'S': 15,\n",
+    "                    'sigma_ability': 1,\n",
+    "                    'sigma_difficulty': 2,\n",
+    "                    'mu_difficulty': -1}\n",
+    "binary_sim_data, binary_sim_recoverables = generate_binary_irt_data(binary_sim_input)\n",
+    "# print results\n",
+    "print('Here is our randomly generated data:')\n",
+    "pprint(binary_sim_data)  # pprint makes the dictionary print nicely"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "69183235",
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "NameError",
+     "evalue": "name 'binary_irt_model' is not defined",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-9-ecedfee8811c>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0;31m# fit model\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 2\u001b[0;31m \u001b[0mbinary_fit\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mbinary_irt_model\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0msampling\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mdata\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mbinary_sim_data\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0miter\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;36m2000\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mchains\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;36m4\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      3\u001b[0m \u001b[0;31m# extract parameters\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      4\u001b[0m \u001b[0mbinary_params\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mbinary_fit\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mextract\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      5\u001b[0m \u001b[0;31m# print fit summary\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;31mNameError\u001b[0m: name 'binary_irt_model' is not defined"
+     ]
+    }
+   ],
+   "source": [
+    "# fit model\n",
+    "binary_fit = binary_irt_model.sampling(data=binary_sim_data, iter=2000, chains=4)\n",
+    "# extract parameters\n",
+    "binary_params = binary_fit.extract()\n",
+    "# print fit summary\n",
+    "print(binary_fit)\n",
+    "# draw summary plot\n",
+    "f = binary_fit.plot()\n",
+    "f.set_size_inches(18, 10)\n",
+    "plt.tight_layout()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
